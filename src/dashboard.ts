@@ -82,6 +82,20 @@ function generateSessionID(): string {
   return randomHex(16);
 }
 
+async function sha256hex(text: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// Compare via digests so the raw password length/content isn't timing-observable.
+async function passwordMatches(provided: string, expected: string): Promise<boolean> {
+  const [a, b] = await Promise.all([sha256hex(provided), sha256hex(expected)]);
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 function strAny(...vals: unknown[]): string {
   for (const v of vals) {
     if (typeof v === "string" && v !== "") return v;
@@ -531,12 +545,17 @@ export async function dashboard(request: Request, env: Env): Promise<Response> {
     }
     const form = await request.formData();
     const provided = typeof form.get("password") === "string" ? (form.get("password") as string) : "";
-    if (provided !== password) {
+    if (!(await passwordMatches(provided, password))) {
       return new Response('{"error":"密码错误"}', { status: 401, headers: { "Content-Type": "application/json" } });
     }
+    // Prune expired sessions so the per-isolate map stays bounded.
+    const now = Date.now();
+    for (const [id, expiry] of sessionTokens) {
+      if (now > expiry) sessionTokens.delete(id);
+    }
     const sessionID = generateSessionID();
-    sessionTokens.set(sessionID, Date.now() + SESSION_TTL_MS);
-    const cookie = `${SESSION_COOKIE}=${sessionID}; Path=/; HttpOnly; Max-Age=86400; SameSite=Lax`;
+    sessionTokens.set(sessionID, now + SESSION_TTL_MS);
+    const cookie = `${SESSION_COOKIE}=${sessionID}; Path=/; HttpOnly; Secure; Max-Age=86400; SameSite=Lax`;
     return new Response('{"ok":true}', {
       headers: { "Content-Type": "application/json", "Set-Cookie": cookie },
     });

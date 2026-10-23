@@ -103,7 +103,10 @@ async function checkAPIKey(request: Request, env: Env): Promise<Response | null>
   if (provided === "") provided = (request.headers.get("X-Api-Key") ?? "").trim();
   if (provided === "") return jsonError(401, "Missing API key");
   const [expHash, gotHash] = await Promise.all([sha256hex(expected), sha256hex(provided)]);
-  if (expHash !== gotHash) return jsonError(401, "Invalid API key");
+  if (expHash.length !== gotHash.length) return jsonError(401, "Invalid API key");
+  let diff = 0;
+  for (let i = 0; i < expHash.length; i++) diff |= expHash.charCodeAt(i) ^ gotHash.charCodeAt(i);
+  if (diff !== 0) return jsonError(401, "Invalid API key");
   return null;
 }
 
@@ -146,10 +149,6 @@ const ANTHROPIC: Protocol = {
   encodeFinal: (m) => anthropicProtocol.encodeResponse(m),
   sseFormat: (name, data) => `event: ${name}\ndata: ${data}\n\n`,
 };
-
-function eventMessage(event: ResponseEvent, fallback: AssistantMessage | undefined): AssistantMessage | undefined {
-  return event.message ?? event.error ?? event.partial ?? fallback;
-}
 
 async function createCompletion(request: Request, env: Env, protocol: Protocol): Promise<Response> {
   const devin = getAdapter(env);
@@ -208,7 +207,6 @@ async function createCompletion(request: Request, env: Env, protocol: Protocol):
 async function collectFinalMessage(stream: AsyncGenerator<ResponseEvent>): Promise<AssistantMessage> {
   let final: AssistantMessage | undefined;
   for await (const event of stream) {
-    debugEvent(event);
     if (event.type === "done") {
       if (!event.message) throw new Error("done event has no final message");
       final = event.message;
@@ -218,10 +216,6 @@ async function collectFinalMessage(stream: AsyncGenerator<ResponseEvent>): Promi
   }
   if (!final) throw new Error("response stream ended without a final message");
   return final;
-}
-
-function debugEvent(_event: ResponseEvent): void {
-  /* recorded at a coarser level via debug() when DEBUG is on */
 }
 
 function sseResponse(
@@ -373,7 +367,16 @@ async function responsesWebSocket(request: Request, env: Env): Promise<Response>
     }
   };
 
+  let handled = false;
+  let closed = false;
+  server.addEventListener("close", () => {
+    closed = true;
+  });
   server.addEventListener("message", (msgEvent) => {
+    // Go processes only the first response.create frame; later frames are just
+    // read for cancel detection. Replicate: ignore further messages.
+    if (handled) return;
+    handled = true;
     void (async () => {
       let payload: Record<string, unknown>;
       try {
@@ -385,15 +388,40 @@ async function responsesWebSocket(request: Request, env: Env): Promise<Response>
       }
       const devin = getAdapter(env);
       if (!devin) {
-        send(JSON.stringify({ type: "error", message: "provider adapter is not configured" }));
         server.close(1011, "not configured");
         return;
       }
-      const encoder = new responsesProtocol.StreamEncoder("");
+      const sendError = (message: string) => {
+        // Forward the protocol's own error event payload (what Go emitted after
+        // extracting the SSE data: line) rather than an ad-hoc shape.
+        try {
+          const encoder = new responsesProtocol.StreamEncoder("");
+          const usage = emptyUsage();
+          for (const encoded of encoder.encode({
+            type: "error",
+            reason: "error",
+            error: {
+              role: "assistant",
+              content: [],
+              model: "",
+              responseModel: "",
+              usage,
+              timestampMS: Date.now(),
+              errorMessage: message,
+            },
+          })) {
+            send(encoded.data);
+          }
+        } catch {
+          send(JSON.stringify({ type: "error", message }));
+        }
+      };
       try {
         const adapted = responsesProtocol.decodeRequest(JSON.stringify(payload));
+        const encoder = new responsesProtocol.StreamEncoder(adapted.context.model);
         const stream = devin.stream(adapted.context);
         for await (const event of stream) {
+          if (closed) return;
           for (const encoded of encoder.encode(event)) {
             send(encoded.data);
           }
@@ -404,7 +432,7 @@ async function responsesWebSocket(request: Request, env: Env): Promise<Response>
         }
         server.close(1000, "");
       } catch (e) {
-        send(JSON.stringify({ type: "error", message: (e as Error).message }));
+        sendError((e as Error).message);
         server.close(1011, "error");
       }
     })();
