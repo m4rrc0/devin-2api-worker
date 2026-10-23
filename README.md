@@ -24,6 +24,7 @@ Set in `wrangler.toml` `[vars]` or the dashboard:
 | `DEVIN_MODEL` | `""` | fallback model when request omits one |
 | `DEBUG` | `false` | console debug logging |
 | `MAX_CONCURRENCY` | `1024` | per-isolate concurrent request cap |
+| `MAX_BODY_BYTES` | `33554432` (32 MiB) | request body cap for `/v1/*` completions; lower on Workers Free to spare CPU |
 
 Secrets (`wrangler secret put`):
 
@@ -50,6 +51,14 @@ npm run gen                # regenerate proto types from proto/descriptors.binpb
 wrangler secret put DEVIN_TOKEN
 wrangler deploy
 ```
+
+### Workers Free plan notes
+
+- **CPU: 10 ms per invocation.** Waiting on the upstream `fetch` does not count, but body parsing and per-frame stream encode/decode do. Large image bodies and very long streams are the drivers — watch for `exceededCpu` (Error 1102) in metrics. `cpu_ms` is only configurable on Paid.
+- **100,000 requests/day**; the dashboard panel counts too. Overage returns Cloudflare Error 1027.
+- **6 simultaneous outgoing connections per invocation.** `/panel/api/status` fans out 5 — do not add more parallel upstream calls there.
+- **Streaming/WS are fine**: no wall-clock limit while the client is connected; a WS upgrade counts as one request and frames are free.
+- Full list: https://developers.cloudflare.com/workers/platform/limits/
 
 ## Layout
 

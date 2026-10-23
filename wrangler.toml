@@ -8,6 +8,9 @@ compatibility_flags = ["nodejs_compat"]
 DEVIN_BASE_URL = "https://server.codeium.com"
 DEVIN_MODEL = ""
 DEBUG = "false"
+# Request body cap (bytes) for /v1/* completions. Default 32 MiB.
+# Lower it on Workers Free — large image bodies burn the 10 ms CPU budget.
+MAX_BODY_BYTES = "33554432"
 
 # Secrets (set with `wrangler secret put <NAME>`):
 #   DEVIN_TOKEN        — devin-session-token$... (required for /v1/*)
