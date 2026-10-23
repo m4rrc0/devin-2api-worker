@@ -17,10 +17,16 @@ export type Env = {
   API_KEY?: string;
   DASHBOARD_PASSWORD?: string;
   MAX_CONCURRENCY?: string;
+  MAX_BODY_BYTES?: string;
 };
 
 const DEFAULT_MAX_CONCURRENCY = 1024;
-const BODY_LIMIT = 32 << 20;
+const DEFAULT_BODY_LIMIT = 32 << 20;
+
+function bodyLimit(env: Env): number {
+  const v = Number(env.MAX_BODY_BYTES ?? "0");
+  return v > 0 ? v : DEFAULT_BODY_LIMIT;
+}
 const WS_PROTOCOL = "responses_websockets=2026-02-06";
 
 // Per-isolate state.
@@ -156,7 +162,7 @@ async function createCompletion(request: Request, env: Env, protocol: Protocol):
 
   let body: string;
   try {
-    body = await readBodyLimited(request);
+    body = await readBodyLimited(request, bodyLimit(env));
   } catch (e) {
     return loggedError(env, "http_read", 400, e as Error);
   }
@@ -293,14 +299,12 @@ function sseResponse(
   });
 }
 
-async function readBodyLimited(request: Request): Promise<string> {
+async function readBodyLimited(request: Request, limit: number): Promise<string> {
   const length = Number(request.headers.get("content-length") ?? "0");
-  if (length > BODY_LIMIT) throw new Error(`request body exceeds ${BODY_LIMIT} bytes`);
-  const text = await request.text();
-  if (new TextEncoder().encode(text).byteLength > BODY_LIMIT) {
-    throw new Error(`request body exceeds ${BODY_LIMIT} bytes`);
-  }
-  return text;
+  if (length > limit) throw new Error(`request body exceeds ${limit} bytes`);
+  const buf = await request.arrayBuffer();
+  if (buf.byteLength > limit) throw new Error(`request body exceeds ${limit} bytes`);
+  return new TextDecoder().decode(buf);
 }
 
 // ---- /v1/models ----

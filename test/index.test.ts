@@ -215,3 +215,39 @@ describe("websocket route", () => {
     expect(res.headers.get("allow")).toBe("POST");
   });
 });
+
+describe("body limits", () => {
+  it("rejects oversized body without content-length", async () => {
+    // Chunked/unknown length: the size check must still apply.
+    const chunks = new ReadableStream<Uint8Array>({
+      start(c) {
+        const head = new TextEncoder().encode('{"model":"m","messages":[{"role":"user","content":"');
+        c.enqueue(head);
+        const pad = new Uint8Array(33 << 20).fill(0x61); // 33 MiB > 32 MiB limit
+        c.enqueue(pad);
+        c.enqueue(new TextEncoder().encode('"}]}'));
+        c.close();
+      },
+    });
+    const res = await SELF.fetch("http://t/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: chunks,
+      // @ts-expect-error duplex required for streaming bodies
+      duplex: "half",
+    });
+    expect(res.status).toBe(400);
+    const j = (await res.json()) as { error: { message: string } };
+    expect(j.error.message).toMatch(/exceeds/);
+  });
+
+  it("honors MAX_BODY_BYTES override", async () => {
+    testEnv.MAX_BODY_BYTES = "1024";
+    const res = await post("/v1/chat/completions", {
+      model: "m",
+      messages: [{ role: "user", content: "x".repeat(2000) }],
+    });
+    expect(res.status).toBe(400);
+    delete testEnv.MAX_BODY_BYTES;
+  });
+});
