@@ -18,3 +18,8 @@ Status markers: `[ ]` pending, `[x]` done.
 - [x] 10. `readBodyLimited`: single-pass body read via `request.arrayBuffer()` — drops the full-body `TextEncoder().encode()` re-encode (CPU+memory win on 32 MiB bodies). Test: oversized body w/o content-length still rejected.
 - [x] 11. `MAX_BODY_BYTES` env var (default 32 MiB) so free-plan deploys can lower the cap; wrangler.toml var + test override path.
 - [x] 12. README + wrangler.toml comments: free-plan limits (10 ms CPU, 100k req/day, WS counting, `cpu_ms` paid-only, 6 outgoing-connection cap — dashboard fans out 5).
+
+## Round 3 — CI deploy
+
+- [x] 13. `.github/workflows/deploy.yml`: on push to main → npm i → vitest → typecheck → wrangler deploy (cloudflare/wrangler-action).
+- [x] 14. README: required secrets (CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID), token scope, app-secret note.

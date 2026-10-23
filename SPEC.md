@@ -66,3 +66,11 @@ TypeScript, no framework router (URL switch), protobuf-es generated types in `sr
 - API key compared via SHA-256 + constant-time compare.
 - Panel password compared constant-time; session IDs 256-bit random; HttpOnly cookie.
 - No request-body size blowups (32 MiB cap), upstream errors sanitized of transport internals.
+
+## CI/CD
+
+GitHub Actions deploys the worker on every push to `main`:
+
+- `.github/workflows/deploy.yml` runs install → tests → typecheck → `wrangler deploy` via `cloudflare/wrangler-action`.
+- Required repo secrets: `CLOUDFLARE_API_TOKEN` (Workers Scripts Edit on this account), `CLOUDFLARE_ACCOUNT_ID`.
+- App secrets (DEVIN_TOKEN etc.) are NOT set by CI — set once via `wrangler secret put` or the dashboard.

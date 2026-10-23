@@ -47,8 +47,22 @@ npm run gen                # regenerate proto types from proto/descriptors.binpb
 
 ## Deploy
 
+### Via GitHub Actions (automatic)
+
+`.github/workflows/deploy.yml` runs tests + typecheck on every push to `main`, then deploys via `cloudflare/wrangler-action`. Required **repository secrets** (Settings → Secrets and variables → Actions):
+
+| Secret | Purpose |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | API token with **Workers Scripts:Edit** on the account. Create at dash.cloudflare.com → My Profile → API Tokens → use the "Edit Cloudflare Workers" template. |
+| `CLOUDFLARE_ACCOUNT_ID` | Account ID — Cloudflare dashboard → Workers & Pages → right sidebar. |
+
+CI deploys only the worker code and `[vars]` from `wrangler.toml` — it does **not** set app secrets. Set those once (see below).
+
+### Manually
+
 ```sh
 wrangler secret put DEVIN_TOKEN
+# optional: wrangler secret put API_KEY / DASHBOARD_PASSWORD
 wrangler deploy
 ```
 
