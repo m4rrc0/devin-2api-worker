@@ -7,7 +7,7 @@ import { enumDesc, fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
 import type { ChatMessagePrompt, ChatToolChoice, ChatToolDefinition, PromptCacheOptions } from "../chat_pb/chat_pb";
 import { file_exa_chat_pb_chat } from "../chat_pb/chat_pb";
-import type { ChatToolCall, ClientModelConfig, ClientModelSort, CompletionConfiguration, CompletionProfile, ConversationalPlannerMode, DefaultOverrideModelConfig, ExperimentConfig, Language, Metadata, Model, ModelUsageStats, ProviderSource, ResponseDimensionGroup, StopReason } from "../codeium_common_pb/codeium_common_pb";
+import type { ChatToolCall, ClientModelConfig, ClientModelSort, CompletionConfiguration, CompletionProfile, ConversationalPlannerMode, DefaultOverrideModelConfig, ExperimentConfig, IdeStatus, Language, Metadata, Model, ModelProvider, ModelStatusInfo, ModelUsageStats, ProviderSource, ResponseDimensionGroup, StopReason } from "../codeium_common_pb/codeium_common_pb";
 import { file_exa_codeium_common_pb_codeium_common } from "../codeium_common_pb/codeium_common_pb";
 import type { CortexTrajectoryReference } from "../cortex_pb/cortex_pb";
 import { file_exa_cortex_pb_cortex } from "../cortex_pb/cortex_pb";
@@ -19,7 +19,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file exa/api_server_pb/api_server.proto.
  */
 export const file_exa_api_server_pb_api_server: GenFile = /*@__PURE__*/
-  fileDesc("CiJleGEvYXBpX3NlcnZlcl9wYi9hcGlfc2VydmVyLnByb3RvEhFleGEuYXBpX3NlcnZlcl9wYiLsCQoVR2V0Q2hhdE1lc3NhZ2VSZXF1ZXN0EjkKCG1ldGFkYXRhGAEgASgLMh8uZXhhLmNvZGVpdW1fY29tbW9uX3BiLk1ldGFkYXRhQga6SAPIAQESDgoGcHJvbXB0GAIgASgJEkYKFGNoYXRfbWVzc2FnZV9wcm9tcHRzGAMgAygLMh4uZXhhLmNoYXRfcGIuQ2hhdE1lc3NhZ2VQcm9tcHRCCLpIBZIBAggBEh8KF3VzZV9pbnRlcm5hbF9jaGF0X21vZGVsGAUgASgIEj0KE2ludGVybmFsX2NoYXRfbW9kZWwYBiABKA4yHC5leGEuY29kZWl1bV9jb21tb25fcGIuTW9kZWxCAhgBEhYKDmNoYXRfbW9kZWxfdWlkGBUgASgJEj8KDHJlcXVlc3RfdHlwZRgHIAEoDjIpLmV4YS5hcGlfc2VydmVyX3BiLkNoYXRNZXNzYWdlUmVxdWVzdFR5cGUSRQoNY29uZmlndXJhdGlvbhgIIAEoCzIuLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5Db21wbGV0aW9uQ29uZmlndXJhdGlvbhJCChFleHBlcmltZW50X2NvbmZpZxgJIAEoCzInLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5FeHBlcmltZW50Q29uZmlnEi4KBXRvb2xzGAogAygLMh8uZXhhLmNoYXRfcGIuQ2hhdFRvb2xEZWZpbml0aW9uEiMKG2Rpc2FibGVfcGFyYWxsZWxfdG9vbF9jYWxscxgLIAEoCBIwCgt0b29sX2Nob2ljZRgMIAEoCzIbLmV4YS5jaGF0X3BiLkNoYXRUb29sQ2hvaWNlEkQKG3N5c3RlbV9wcm9tcHRfY2FjaGVfb3B0aW9ucxgNIAEoCzIfLmV4YS5jaGF0X3BiLlByb21wdENhY2hlT3B0aW9ucxIXCg9jaGF0X21vZGVsX25hbWUYDiABKAkSRgoUdHJhamVjdG9yeV9yZWZlcmVuY2UYDyABKAsyKC5leGEuY29ydGV4X3BiLkNvcnRleFRyYWplY3RvcnlSZWZlcmVuY2USEgoKY2FzY2FkZV9pZBgQIAEoCRIRCglwcm9tcHRfaWQYESABKAkSPgoPcHJvdmlkZXJfc291cmNlGBIgASgOMiUuZXhhLmNvZGVpdW1fY29tbW9uX3BiLlByb3ZpZGVyU291cmNlEjEKCGxhbmd1YWdlGBMgASgOMh8uZXhhLmNvZGVpdW1fY29tbW9uX3BiLkxhbmd1YWdlEkYKDHBsYW5uZXJfbW9kZRgUIAEoDjIwLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5Db252ZXJzYXRpb25hbFBsYW5uZXJNb2RlEhQKDGV4ZWN1dGlvbl9pZBgWIAEoCRIhChRhcmVuYV9jb252ZXJnZV9jb3VudBgYIAEoBUgAiAEBEiEKFGFyZW5hX2Fzc2lnbm1lbnRfand0GBkgASgJSAGIAQESIQoUbW9kZWxfYXNzaWdubWVudF9qd3QYGiABKAlIAogBAUIXChVfYXJlbmFfY29udmVyZ2VfY291bnRCFwoVX2FyZW5hX2Fzc2lnbm1lbnRfand0QhcKFV9tb2RlbF9hc3NpZ25tZW50X2p3dEoECBcQGEoECAQQBVIKYXJlbmFfdGllclIKbW9kZWxfbmFtZSK4CAoWR2V0Q2hhdE1lc3NhZ2VSZXNwb25zZRIbCgptZXNzYWdlX2lkGAEgASgJQge6SARyAhABEjUKCXRpbWVzdGFtcBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCBrpIA8gBARISCgpkZWx0YV90ZXh0GAMgASgJEhQKDGRlbHRhX3Rva2VucxgEIAEoDRI2CgtzdG9wX3JlYXNvbhgFIAEoDjIhLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5TdG9wUmVhc29uEj0KEGRlbHRhX3Rvb2xfY2FsbHMYBiADKAsyIy5leGEuY29kZWl1bV9jb21tb25fcGIuQ2hhdFRvb2xDYWxsEjUKBXVzYWdlGAcgASgLMiYuZXhhLmNvZGVpdW1fY29tbW9uX3BiLk1vZGVsVXNhZ2VTdGF0cxITCgtjcmVkaXRfY29zdBgOIAEoBRIOCgZyZWRhY3QYCCABKAgSFgoOZGVsdGFfdGhpbmtpbmcYCSABKAkSFwoPZGVsdGFfc2lnbmF0dXJlGAogASgJEhkKEXRoaW5raW5nX3JlZGFjdGVkGAsgASgIEg8KB2xhdGVuY3kYDCABKAESRAoSY29tcGxldGlvbl9wcm9maWxlGA0gASgLMiguZXhhLmNvZGVpdW1fY29tbW9uX3BiLkNvbXBsZXRpb25Qcm9maWxlEhEKCW91dHB1dF9pZBgPIAEoCRIXCgt0aGlua2luZ19pZBgQIAEoCUICGAESEgoKcmVxdWVzdF9pZBgRIAEoCRIdChVjb21taXR0ZWRfY3JlZGl0X2Nvc3QYEiABKAUSDgoGcHJvbXB0GBMgASgJEiQKGGdlbWluaV90aG91Z2h0X3NpZ25hdHVyZRgUIAEoDEICGAESHAoUZGVsdGFfc2lnbmF0dXJlX3R5cGUYFSABKAkSGgoSY29tbWl0dGVkX2FjdV9jb3N0GBYgASgBEh0KEGFjdHVhbF9tb2RlbF91aWQYFyABKAlIAIgBARIkChxhcmVuYV9pbnZvY2F0aW9uX2NhcF9yZWFjaGVkGBggASgIEg0KBXBoYXNlGBkgASgJEi4KIWNvbW1pdHRlZF9xdW90YV9jb3N0X2Jhc2lzX3BvaW50cxgaIAEoA0gBiAEBEikKHGNvbW1pdHRlZF9vdmVyYWdlX2Nvc3RfY2VudHMYGyABKANIAogBARJQChlyZXNwb25zZV9kaW1lbnNpb25fZ3JvdXBzGBwgAygLMi0uZXhhLmNvZGVpdW1fY29tbW9uX3BiLlJlc3BvbnNlRGltZW5zaW9uR3JvdXBCEwoRX2FjdHVhbF9tb2RlbF91aWRCJAoiX2NvbW1pdHRlZF9xdW90YV9jb3N0X2Jhc2lzX3BvaW50c0IfCh1fY29tbWl0dGVkX292ZXJhZ2VfY29zdF9jZW50cyJgCh1HZXRDYXNjYWRlTW9kZWxDb25maWdzUmVxdWVzdBIxCghtZXRhZGF0YRgBIAEoCzIfLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5NZXRhZGF0YUoECAIQA1IGZmlsdGVyIq0CCh5HZXRDYXNjYWRlTW9kZWxDb25maWdzUmVzcG9uc2USRgoUY2xpZW50X21vZGVsX2NvbmZpZ3MYASADKAsyKC5leGEuY29kZWl1bV9jb21tb25fcGIuQ2xpZW50TW9kZWxDb25maWcSQgoSY2xpZW50X21vZGVsX3NvcnRzGAIgAygLMiYuZXhhLmNvZGVpdW1fY29tbW9uX3BiLkNsaWVudE1vZGVsU29ydBJdCh1kZWZhdWx0X292ZXJyaWRlX21vZGVsX2NvbmZpZxgDIAEoCzIxLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5EZWZhdWx0T3ZlcnJpZGVNb2RlbENvbmZpZ0gAiAEBQiAKHl9kZWZhdWx0X292ZXJyaWRlX21vZGVsX2NvbmZpZyrABQoWQ2hhdE1lc3NhZ2VSZXF1ZXN0VHlwZRIpCiVDSEFUX01FU1NBR0VfUkVRVUVTVF9UWVBFX1VOU1BFQ0lGSUVEEAASJQohQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9HRU5FUkFMEAESKwonQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9DT05URVhUX0NIRUNLEAISIgoeQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9QTEFOEAMSJQohQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9DT01NQU5EEAQSJQohQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9DQVNDQURFEAUSIgoeQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9FVkFMEAYSLQopQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9XSU5EU1VSRl9SRVZJRVcQBxIuCipDSEFUX01FU1NBR0VfUkVRVUVTVF9UWVBFX1ZJQkVfQU5EX1JFUExBQ0UQCBImCiJDSEFUX01FU1NBR0VfUkVRVUVTVF9UWVBFX0RFRVBXSUtJEAkSJgoiQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9ERVZTVFJBTBAKEjAKLENIQVRfTUVTU0FHRV9SRVFVRVNUX1RZUEVfQ09ERU1BUF9HRU5FUkFUSU9OEAsSMQotQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9DT0RFTUFQX1NVR0dFU1RJT05TEAwSKgomQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9TTUFSVF9GUklFTkQQDRInCiNDSEFUX01FU1NBR0VfUkVRVUVTVF9UWVBFX0xJRkVHVUFSRBAOEigKJENIQVRfTUVTU0FHRV9SRVFVRVNUX1RZUEVfQ0hFQ0tQT0lOVBAPQjZaNGdpdGh1Yi5jb20vRXhhZnVuY3Rpb24vRXhhZnVuY3Rpb24vZXhhL2FwaV9zZXJ2ZXJfcGJiBnByb3RvMw", [file_buf_validate_validate, file_exa_chat_pb_chat, file_exa_codeium_common_pb_codeium_common, file_exa_cortex_pb_cortex, file_google_protobuf_timestamp]);
+  fileDesc("CiJleGEvYXBpX3NlcnZlcl9wYi9hcGlfc2VydmVyLnByb3RvEhFleGEuYXBpX3NlcnZlcl9wYiLsCQoVR2V0Q2hhdE1lc3NhZ2VSZXF1ZXN0EjkKCG1ldGFkYXRhGAEgASgLMh8uZXhhLmNvZGVpdW1fY29tbW9uX3BiLk1ldGFkYXRhQga6SAPIAQESDgoGcHJvbXB0GAIgASgJEkYKFGNoYXRfbWVzc2FnZV9wcm9tcHRzGAMgAygLMh4uZXhhLmNoYXRfcGIuQ2hhdE1lc3NhZ2VQcm9tcHRCCLpIBZIBAggBEh8KF3VzZV9pbnRlcm5hbF9jaGF0X21vZGVsGAUgASgIEj0KE2ludGVybmFsX2NoYXRfbW9kZWwYBiABKA4yHC5leGEuY29kZWl1bV9jb21tb25fcGIuTW9kZWxCAhgBEhYKDmNoYXRfbW9kZWxfdWlkGBUgASgJEj8KDHJlcXVlc3RfdHlwZRgHIAEoDjIpLmV4YS5hcGlfc2VydmVyX3BiLkNoYXRNZXNzYWdlUmVxdWVzdFR5cGUSRQoNY29uZmlndXJhdGlvbhgIIAEoCzIuLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5Db21wbGV0aW9uQ29uZmlndXJhdGlvbhJCChFleHBlcmltZW50X2NvbmZpZxgJIAEoCzInLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5FeHBlcmltZW50Q29uZmlnEi4KBXRvb2xzGAogAygLMh8uZXhhLmNoYXRfcGIuQ2hhdFRvb2xEZWZpbml0aW9uEiMKG2Rpc2FibGVfcGFyYWxsZWxfdG9vbF9jYWxscxgLIAEoCBIwCgt0b29sX2Nob2ljZRgMIAEoCzIbLmV4YS5jaGF0X3BiLkNoYXRUb29sQ2hvaWNlEkQKG3N5c3RlbV9wcm9tcHRfY2FjaGVfb3B0aW9ucxgNIAEoCzIfLmV4YS5jaGF0X3BiLlByb21wdENhY2hlT3B0aW9ucxIXCg9jaGF0X21vZGVsX25hbWUYDiABKAkSRgoUdHJhamVjdG9yeV9yZWZlcmVuY2UYDyABKAsyKC5leGEuY29ydGV4X3BiLkNvcnRleFRyYWplY3RvcnlSZWZlcmVuY2USEgoKY2FzY2FkZV9pZBgQIAEoCRIRCglwcm9tcHRfaWQYESABKAkSPgoPcHJvdmlkZXJfc291cmNlGBIgASgOMiUuZXhhLmNvZGVpdW1fY29tbW9uX3BiLlByb3ZpZGVyU291cmNlEjEKCGxhbmd1YWdlGBMgASgOMh8uZXhhLmNvZGVpdW1fY29tbW9uX3BiLkxhbmd1YWdlEkYKDHBsYW5uZXJfbW9kZRgUIAEoDjIwLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5Db252ZXJzYXRpb25hbFBsYW5uZXJNb2RlEhQKDGV4ZWN1dGlvbl9pZBgWIAEoCRIhChRhcmVuYV9jb252ZXJnZV9jb3VudBgYIAEoBUgAiAEBEiEKFGFyZW5hX2Fzc2lnbm1lbnRfand0GBkgASgJSAGIAQESIQoUbW9kZWxfYXNzaWdubWVudF9qd3QYGiABKAlIAogBAUIXChVfYXJlbmFfY29udmVyZ2VfY291bnRCFwoVX2FyZW5hX2Fzc2lnbm1lbnRfand0QhcKFV9tb2RlbF9hc3NpZ25tZW50X2p3dEoECBcQGEoECAQQBVIKYXJlbmFfdGllclIKbW9kZWxfbmFtZSK4CAoWR2V0Q2hhdE1lc3NhZ2VSZXNwb25zZRIbCgptZXNzYWdlX2lkGAEgASgJQge6SARyAhABEjUKCXRpbWVzdGFtcBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCBrpIA8gBARISCgpkZWx0YV90ZXh0GAMgASgJEhQKDGRlbHRhX3Rva2VucxgEIAEoDRI2CgtzdG9wX3JlYXNvbhgFIAEoDjIhLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5TdG9wUmVhc29uEj0KEGRlbHRhX3Rvb2xfY2FsbHMYBiADKAsyIy5leGEuY29kZWl1bV9jb21tb25fcGIuQ2hhdFRvb2xDYWxsEjUKBXVzYWdlGAcgASgLMiYuZXhhLmNvZGVpdW1fY29tbW9uX3BiLk1vZGVsVXNhZ2VTdGF0cxITCgtjcmVkaXRfY29zdBgOIAEoBRIOCgZyZWRhY3QYCCABKAgSFgoOZGVsdGFfdGhpbmtpbmcYCSABKAkSFwoPZGVsdGFfc2lnbmF0dXJlGAogASgJEhkKEXRoaW5raW5nX3JlZGFjdGVkGAsgASgIEg8KB2xhdGVuY3kYDCABKAESRAoSY29tcGxldGlvbl9wcm9maWxlGA0gASgLMiguZXhhLmNvZGVpdW1fY29tbW9uX3BiLkNvbXBsZXRpb25Qcm9maWxlEhEKCW91dHB1dF9pZBgPIAEoCRIXCgt0aGlua2luZ19pZBgQIAEoCUICGAESEgoKcmVxdWVzdF9pZBgRIAEoCRIdChVjb21taXR0ZWRfY3JlZGl0X2Nvc3QYEiABKAUSDgoGcHJvbXB0GBMgASgJEiQKGGdlbWluaV90aG91Z2h0X3NpZ25hdHVyZRgUIAEoDEICGAESHAoUZGVsdGFfc2lnbmF0dXJlX3R5cGUYFSABKAkSGgoSY29tbWl0dGVkX2FjdV9jb3N0GBYgASgBEh0KEGFjdHVhbF9tb2RlbF91aWQYFyABKAlIAIgBARIkChxhcmVuYV9pbnZvY2F0aW9uX2NhcF9yZWFjaGVkGBggASgIEg0KBXBoYXNlGBkgASgJEi4KIWNvbW1pdHRlZF9xdW90YV9jb3N0X2Jhc2lzX3BvaW50cxgaIAEoA0gBiAEBEikKHGNvbW1pdHRlZF9vdmVyYWdlX2Nvc3RfY2VudHMYGyABKANIAogBARJQChlyZXNwb25zZV9kaW1lbnNpb25fZ3JvdXBzGBwgAygLMi0uZXhhLmNvZGVpdW1fY29tbW9uX3BiLlJlc3BvbnNlRGltZW5zaW9uR3JvdXBCEwoRX2FjdHVhbF9tb2RlbF91aWRCJAoiX2NvbW1pdHRlZF9xdW90YV9jb3N0X2Jhc2lzX3BvaW50c0IfCh1fY29tbWl0dGVkX292ZXJhZ2VfY29zdF9jZW50cyKrAQoYQ2hlY2tDaGF0Q2FwYWNpdHlSZXF1ZXN0EjkKCG1ldGFkYXRhGAEgASgLMh8uZXhhLmNvZGVpdW1fY29tbW9uX3BiLk1ldGFkYXRhQga6SAPIAQESQQoQbW9kZWxfZGVwcmVjYXRlZBgCIAEoDjIcLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5Nb2RlbEICGAFSBW1vZGVsEhEKCW1vZGVsX3VpZBgDIAEoCSJbChlDaGVja0NoYXRDYXBhY2l0eVJlc3BvbnNlEhQKDGhhc19jYXBhY2l0eRgBIAEoCBIPCgdtZXNzYWdlGAIgASgJEhcKD2FjdGl2ZV9zZXNzaW9ucxgDIAEoBSJUChdHZXRNb2RlbFN0YXR1c2VzUmVxdWVzdBI5CghtZXRhZGF0YRgBIAEoCzIfLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5NZXRhZGF0YUIGukgDyAEBIl4KGEdldE1vZGVsU3RhdHVzZXNSZXNwb25zZRJCChJtb2RlbF9zdGF0dXNfaW5mb3MYASADKAsyJi5leGEuY29kZWl1bV9jb21tb25fcGIuTW9kZWxTdGF0dXNJbmZvIhoKGEdldE1vZGVsUHJvdmlkZXJzUmVxdWVzdCJhChFNb2RlbFByb3ZpZGVySW5mbxI2Cghwcm92aWRlchgBIAEoDjIkLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5Nb2RlbFByb3ZpZGVyEhQKDGRpc3BsYXlfbmFtZRgCIAEoCSJaChlHZXRNb2RlbFByb3ZpZGVyc1Jlc3BvbnNlEj0KD21vZGVsX3Byb3ZpZGVycxgBIAMoCzIkLmV4YS5hcGlfc2VydmVyX3BiLk1vZGVsUHJvdmlkZXJJbmZvIk0KEEdldFN0YXR1c1JlcXVlc3QSOQoIbWV0YWRhdGEYASABKAsyHy5leGEuY29kZWl1bV9jb21tb25fcGIuTWV0YWRhdGFCBrpIA8gBASJhChFHZXRTdGF0dXNSZXNwb25zZRIwCgZzdGF0dXMYASABKAsyIC5leGEuY29kZWl1bV9jb21tb25fcGIuSWRlU3RhdHVzEhoKEnNob3dfcmV2aWV3X3Byb21wdBgCIAEoCCJgCh1HZXRDYXNjYWRlTW9kZWxDb25maWdzUmVxdWVzdBIxCghtZXRhZGF0YRgBIAEoCzIfLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5NZXRhZGF0YUoECAIQA1IGZmlsdGVyIq0CCh5HZXRDYXNjYWRlTW9kZWxDb25maWdzUmVzcG9uc2USRgoUY2xpZW50X21vZGVsX2NvbmZpZ3MYASADKAsyKC5leGEuY29kZWl1bV9jb21tb25fcGIuQ2xpZW50TW9kZWxDb25maWcSQgoSY2xpZW50X21vZGVsX3NvcnRzGAIgAygLMiYuZXhhLmNvZGVpdW1fY29tbW9uX3BiLkNsaWVudE1vZGVsU29ydBJdCh1kZWZhdWx0X292ZXJyaWRlX21vZGVsX2NvbmZpZxgDIAEoCzIxLmV4YS5jb2RlaXVtX2NvbW1vbl9wYi5EZWZhdWx0T3ZlcnJpZGVNb2RlbENvbmZpZ0gAiAEBQiAKHl9kZWZhdWx0X292ZXJyaWRlX21vZGVsX2NvbmZpZyrABQoWQ2hhdE1lc3NhZ2VSZXF1ZXN0VHlwZRIpCiVDSEFUX01FU1NBR0VfUkVRVUVTVF9UWVBFX1VOU1BFQ0lGSUVEEAASJQohQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9HRU5FUkFMEAESKwonQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9DT05URVhUX0NIRUNLEAISIgoeQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9QTEFOEAMSJQohQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9DT01NQU5EEAQSJQohQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9DQVNDQURFEAUSIgoeQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9FVkFMEAYSLQopQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9XSU5EU1VSRl9SRVZJRVcQBxIuCipDSEFUX01FU1NBR0VfUkVRVUVTVF9UWVBFX1ZJQkVfQU5EX1JFUExBQ0UQCBImCiJDSEFUX01FU1NBR0VfUkVRVUVTVF9UWVBFX0RFRVBXSUtJEAkSJgoiQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9ERVZTVFJBTBAKEjAKLENIQVRfTUVTU0FHRV9SRVFVRVNUX1RZUEVfQ09ERU1BUF9HRU5FUkFUSU9OEAsSMQotQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9DT0RFTUFQX1NVR0dFU1RJT05TEAwSKgomQ0hBVF9NRVNTQUdFX1JFUVVFU1RfVFlQRV9TTUFSVF9GUklFTkQQDRInCiNDSEFUX01FU1NBR0VfUkVRVUVTVF9UWVBFX0xJRkVHVUFSRBAOEigKJENIQVRfTUVTU0FHRV9SRVFVRVNUX1RZUEVfQ0hFQ0tQT0lOVBAPQjZaNGdpdGh1Yi5jb20vRXhhZnVuY3Rpb24vRXhhZnVuY3Rpb24vZXhhL2FwaV9zZXJ2ZXJfcGJiBnByb3RvMw", [file_buf_validate_validate, file_exa_chat_pb_chat, file_exa_codeium_common_pb_codeium_common, file_exa_cortex_pb_cortex, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message exa.api_server_pb.GetChatMessageRequest
@@ -309,6 +309,186 @@ export const GetChatMessageResponseSchema: GenMessage<GetChatMessageResponse> = 
   messageDesc(file_exa_api_server_pb_api_server, 1);
 
 /**
+ * @generated from message exa.api_server_pb.CheckChatCapacityRequest
+ */
+export type CheckChatCapacityRequest = Message<"exa.api_server_pb.CheckChatCapacityRequest"> & {
+  /**
+   * @generated from field: exa.codeium_common_pb.Metadata metadata = 1;
+   */
+  metadata?: Metadata | undefined;
+
+  /**
+   * @generated from field: exa.codeium_common_pb.Model model_deprecated = 2 [json_name = "model", deprecated = true];
+   * @deprecated
+   */
+  modelDeprecated: Model;
+
+  /**
+   * @generated from field: string model_uid = 3;
+   */
+  modelUid: string;
+};
+
+/**
+ * Describes the message exa.api_server_pb.CheckChatCapacityRequest.
+ * Use `create(CheckChatCapacityRequestSchema)` to create a new message.
+ */
+export const CheckChatCapacityRequestSchema: GenMessage<CheckChatCapacityRequest> = /*@__PURE__*/
+  messageDesc(file_exa_api_server_pb_api_server, 2);
+
+/**
+ * @generated from message exa.api_server_pb.CheckChatCapacityResponse
+ */
+export type CheckChatCapacityResponse = Message<"exa.api_server_pb.CheckChatCapacityResponse"> & {
+  /**
+   * @generated from field: bool has_capacity = 1;
+   */
+  hasCapacity: boolean;
+
+  /**
+   * @generated from field: string message = 2;
+   */
+  message: string;
+
+  /**
+   * @generated from field: int32 active_sessions = 3;
+   */
+  activeSessions: number;
+};
+
+/**
+ * Describes the message exa.api_server_pb.CheckChatCapacityResponse.
+ * Use `create(CheckChatCapacityResponseSchema)` to create a new message.
+ */
+export const CheckChatCapacityResponseSchema: GenMessage<CheckChatCapacityResponse> = /*@__PURE__*/
+  messageDesc(file_exa_api_server_pb_api_server, 3);
+
+/**
+ * @generated from message exa.api_server_pb.GetModelStatusesRequest
+ */
+export type GetModelStatusesRequest = Message<"exa.api_server_pb.GetModelStatusesRequest"> & {
+  /**
+   * @generated from field: exa.codeium_common_pb.Metadata metadata = 1;
+   */
+  metadata?: Metadata | undefined;
+};
+
+/**
+ * Describes the message exa.api_server_pb.GetModelStatusesRequest.
+ * Use `create(GetModelStatusesRequestSchema)` to create a new message.
+ */
+export const GetModelStatusesRequestSchema: GenMessage<GetModelStatusesRequest> = /*@__PURE__*/
+  messageDesc(file_exa_api_server_pb_api_server, 4);
+
+/**
+ * @generated from message exa.api_server_pb.GetModelStatusesResponse
+ */
+export type GetModelStatusesResponse = Message<"exa.api_server_pb.GetModelStatusesResponse"> & {
+  /**
+   * @generated from field: repeated exa.codeium_common_pb.ModelStatusInfo model_status_infos = 1;
+   */
+  modelStatusInfos: ModelStatusInfo[];
+};
+
+/**
+ * Describes the message exa.api_server_pb.GetModelStatusesResponse.
+ * Use `create(GetModelStatusesResponseSchema)` to create a new message.
+ */
+export const GetModelStatusesResponseSchema: GenMessage<GetModelStatusesResponse> = /*@__PURE__*/
+  messageDesc(file_exa_api_server_pb_api_server, 5);
+
+/**
+ * @generated from message exa.api_server_pb.GetModelProvidersRequest
+ */
+export type GetModelProvidersRequest = Message<"exa.api_server_pb.GetModelProvidersRequest"> & {
+};
+
+/**
+ * Describes the message exa.api_server_pb.GetModelProvidersRequest.
+ * Use `create(GetModelProvidersRequestSchema)` to create a new message.
+ */
+export const GetModelProvidersRequestSchema: GenMessage<GetModelProvidersRequest> = /*@__PURE__*/
+  messageDesc(file_exa_api_server_pb_api_server, 6);
+
+/**
+ * @generated from message exa.api_server_pb.ModelProviderInfo
+ */
+export type ModelProviderInfo = Message<"exa.api_server_pb.ModelProviderInfo"> & {
+  /**
+   * @generated from field: exa.codeium_common_pb.ModelProvider provider = 1;
+   */
+  provider: ModelProvider;
+
+  /**
+   * @generated from field: string display_name = 2;
+   */
+  displayName: string;
+};
+
+/**
+ * Describes the message exa.api_server_pb.ModelProviderInfo.
+ * Use `create(ModelProviderInfoSchema)` to create a new message.
+ */
+export const ModelProviderInfoSchema: GenMessage<ModelProviderInfo> = /*@__PURE__*/
+  messageDesc(file_exa_api_server_pb_api_server, 7);
+
+/**
+ * @generated from message exa.api_server_pb.GetModelProvidersResponse
+ */
+export type GetModelProvidersResponse = Message<"exa.api_server_pb.GetModelProvidersResponse"> & {
+  /**
+   * @generated from field: repeated exa.api_server_pb.ModelProviderInfo model_providers = 1;
+   */
+  modelProviders: ModelProviderInfo[];
+};
+
+/**
+ * Describes the message exa.api_server_pb.GetModelProvidersResponse.
+ * Use `create(GetModelProvidersResponseSchema)` to create a new message.
+ */
+export const GetModelProvidersResponseSchema: GenMessage<GetModelProvidersResponse> = /*@__PURE__*/
+  messageDesc(file_exa_api_server_pb_api_server, 8);
+
+/**
+ * @generated from message exa.api_server_pb.GetStatusRequest
+ */
+export type GetStatusRequest = Message<"exa.api_server_pb.GetStatusRequest"> & {
+  /**
+   * @generated from field: exa.codeium_common_pb.Metadata metadata = 1;
+   */
+  metadata?: Metadata | undefined;
+};
+
+/**
+ * Describes the message exa.api_server_pb.GetStatusRequest.
+ * Use `create(GetStatusRequestSchema)` to create a new message.
+ */
+export const GetStatusRequestSchema: GenMessage<GetStatusRequest> = /*@__PURE__*/
+  messageDesc(file_exa_api_server_pb_api_server, 9);
+
+/**
+ * @generated from message exa.api_server_pb.GetStatusResponse
+ */
+export type GetStatusResponse = Message<"exa.api_server_pb.GetStatusResponse"> & {
+  /**
+   * @generated from field: exa.codeium_common_pb.IdeStatus status = 1;
+   */
+  status?: IdeStatus | undefined;
+
+  /**
+   * @generated from field: bool show_review_prompt = 2;
+   */
+  showReviewPrompt: boolean;
+};
+
+/**
+ * Describes the message exa.api_server_pb.GetStatusResponse.
+ * Use `create(GetStatusResponseSchema)` to create a new message.
+ */
+export const GetStatusResponseSchema: GenMessage<GetStatusResponse> = /*@__PURE__*/
+  messageDesc(file_exa_api_server_pb_api_server, 10);
+
+/**
  * @generated from message exa.api_server_pb.GetCascadeModelConfigsRequest
  */
 export type GetCascadeModelConfigsRequest = Message<"exa.api_server_pb.GetCascadeModelConfigsRequest"> & {
@@ -323,7 +503,7 @@ export type GetCascadeModelConfigsRequest = Message<"exa.api_server_pb.GetCascad
  * Use `create(GetCascadeModelConfigsRequestSchema)` to create a new message.
  */
 export const GetCascadeModelConfigsRequestSchema: GenMessage<GetCascadeModelConfigsRequest> = /*@__PURE__*/
-  messageDesc(file_exa_api_server_pb_api_server, 2);
+  messageDesc(file_exa_api_server_pb_api_server, 11);
 
 /**
  * @generated from message exa.api_server_pb.GetCascadeModelConfigsResponse
@@ -350,7 +530,7 @@ export type GetCascadeModelConfigsResponse = Message<"exa.api_server_pb.GetCasca
  * Use `create(GetCascadeModelConfigsResponseSchema)` to create a new message.
  */
 export const GetCascadeModelConfigsResponseSchema: GenMessage<GetCascadeModelConfigsResponse> = /*@__PURE__*/
-  messageDesc(file_exa_api_server_pb_api_server, 3);
+  messageDesc(file_exa_api_server_pb_api_server, 12);
 
 /**
  * @generated from enum exa.api_server_pb.ChatMessageRequestType

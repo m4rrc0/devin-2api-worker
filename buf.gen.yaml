@@ -11,3 +11,11 @@ plugins:
       - exa.api_server_pb.GetChatMessageResponse
       - exa.api_server_pb.GetCascadeModelConfigsRequest
       - exa.api_server_pb.GetCascadeModelConfigsResponse
+      - exa.api_server_pb.CheckChatCapacityRequest
+      - exa.api_server_pb.CheckChatCapacityResponse
+      - exa.api_server_pb.GetStatusRequest
+      - exa.api_server_pb.GetStatusResponse
+      - exa.api_server_pb.GetModelProvidersRequest
+      - exa.api_server_pb.GetModelProvidersResponse
+      - exa.api_server_pb.GetModelStatusesRequest
+      - exa.api_server_pb.GetModelStatusesResponse
