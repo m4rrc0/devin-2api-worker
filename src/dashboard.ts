@@ -459,12 +459,12 @@ async function apiModels(env: Env): Promise<Response> {
 
 // ---- HTML pages ----
 
-const LOGIN_PAGE = `<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Devin API - 管理面板</title>
+const LOGIN_PAGE = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Devin API - Admin Panel</title>
 <style>body{font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0}.login-box{background:#1e293b;padding:32px;border-radius:12px;width:320px;box-shadow:0 4px 24px #0008}h1{font-size:20px;margin:0 0 20px;text-align:center}input{width:100%;padding:10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;box-sizing:border-box}button{width:100%;margin-top:12px;padding:10px;border:none;border-radius:8px;background:#6366f1;color:#fff;font-size:15px;cursor:pointer}.error{color:#f87171;text-align:center;margin-top:10px;display:none}</style></head>
-<body><div class="login-box"><h1>Devin API 管理面板</h1>
-<form id="loginForm"><input id="password" type="password" placeholder="访问密码" autocomplete="current-password"><button type="submit">登录</button></form>
-<div class="error" id="err">密码错误</div></div>
+<body><div class="login-box"><h1>Devin API Admin Panel</h1>
+<form id="loginForm"><input id="password" type="password" placeholder="Access password" autocomplete="current-password"><button type="submit">Sign in</button></form>
+<div class="error" id="err">Incorrect password</div></div>
 <script>
 document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();
 const pwd=document.getElementById('password').value;
@@ -472,33 +472,33 @@ const res=await fetch('/panel/login',{method:'POST',headers:{'Content-Type':'app
 if(res.ok){location.reload()}else{const el=document.getElementById('err');el.style.display='block';setTimeout(()=>el.style.display='none',2000)}});
 </script></body></html>`;
 
-const PANEL_PAGE = `<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Devin API - 管理面板</title>
+const PANEL_PAGE = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Devin API - Admin Panel</title>
 <style>body{font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:24px}.container{max-width:1200px;margin:0 auto}h1{font-size:22px}.section{background:#1e293b;border-radius:12px;padding:20px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}.card{background:#0f172a;border-radius:8px;padding:12px}.label{font-size:12px;color:#94a3b8}.value{font-size:16px;font-weight:600;margin-top:4px}.loading{color:#94a3b8}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px;text-align:left;border-bottom:1px solid #334155}th{color:#94a3b8;font-weight:500;position:sticky;top:0;background:#1e293b}.mono{font-family:ui-monospace,monospace;font-size:12px}.muted{color:#64748b}.model-scroll{max-height:480px;overflow:auto}.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.filters input,.filters select{background:#0f172a;border:1px solid #334155;color:#e2e8f0;padding:8px 10px;border-radius:8px;font-size:13px}.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;margin:1px;background:#334155}.note{font-size:12px;color:#64748b;margin-top:12px}.err{color:#f87171;font-size:13px;margin-top:8px}</style></head>
-<body><div class="container"><h1>Devin API 管理面板</h1>
-<div class="section" id="statusSection"><div class="loading">加载中...</div></div>
-<div class="section"><h2 style="margin-top:0">模型目录</h2>
-<div class="filters"><input id="search" placeholder="搜索 uid / 名称" oninput="render()"><select id="fProvider" onchange="render()"><option value="">全部 Provider</option></select><select id="fTier" onchange="render()"><option value="">全部 Tier</option><option value="free">free</option><option value="low">low</option><option value="medium">medium</option><option value="high">high</option><option value="unspecified">unspecified</option></select></div>
-<div class="stats muted mono" id="stats">加载中...</div>
-<div class="model-scroll"><table id="modelTable"><thead><tr><th>模型</th><th>Provider / API</th><th>Tier</th><th>价格 in/out</th><th>Max tokens</th><th>标记</th></tr></thead><tbody></tbody></table></div></div>
-<div class="note">Worker port of devin-2api panel. 数据来自上游 Connect RPC。</div></div>
+<body><div class="container"><h1>Devin API Admin Panel</h1>
+<div class="section" id="statusSection"><div class="loading">Loading...</div></div>
+<div class="section"><h2 style="margin-top:0">Model catalog</h2>
+<div class="filters"><input id="search" placeholder="Search uid / name" oninput="render()"><select id="fProvider" onchange="render()"><option value="">All providers</option></select><select id="fTier" onchange="render()"><option value="">All tiers</option><option value="free">free</option><option value="low">low</option><option value="medium">medium</option><option value="high">high</option><option value="unspecified">unspecified</option></select></div>
+<div class="stats muted mono" id="stats">Loading...</div>
+<div class="model-scroll"><table id="modelTable"><thead><tr><th>Model</th><th>Provider / API</th><th>Tier</th><th>Price in/out</th><th>Max tokens</th><th>Flags</th></tr></thead><tbody></tbody></table></div></div>
+<div class="note">Worker port of devin-2api panel. Data from upstream Connect RPC.</div></div>
 <script>
 let allModels=[];
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const card=(l,v)=>'<div class="card"><div class="label">'+esc(l)+'</div><div class="value">'+esc(String(v))+'</div></div>';
 async function loadStatus(){
  const el=document.getElementById('statusSection');
- try{const res=await fetch('/panel/api/status');const data=await res.json();let html='<h2 style="margin-top:0">账户与状态</h2><div class="grid">';
+ try{const res=await fetch('/panel/api/status');const data=await res.json();let html='<h2 style="margin-top:0">Account & status</h2><div class="grid">';
  const u=data.user||{},p=data.plan_status||{},pi=data.plan_info||{};
- if(data.user){html+=card('用户',u.name||'-')+card('邮箱',u.email||'-')+card('Pro',u.pro?'是':'否')+card('Tier',u.teams_tier||'-');}
- if(pi.plan_name){html+=card('套餐',pi.plan_name)+card('月 Prompt 配额',pi.monthly_prompt_credits??'-')+card('计费策略',pi.billing_strategy||'-');}
- if(data.plan_status){html+=card('剩余 Prompt credits',p.available_prompt_credits??'-')+card('剩余 Flow credits',p.available_flow_credits??'-')+card('日配额剩余',(p.daily_quota_remaining??'-')+'%')+card('周配额剩余',(p.weekly_quota_remaining??'-')+'%');}
- if(data.capacity){const c=data.capacity;html+=card('容量',c.has_capacity?'可用':'受限')+card('活跃会话',c.active_sessions??'-');if(c.message)html+=card('容量信息',c.message);}
- if(data.ide_status){html+=card('IDE 状态',data.ide_status.level||'-');}
+ if(data.user){html+=card('User',u.name||'-')+card('Email',u.email||'-')+card('Pro',u.pro?'Yes':'No')+card('Tier',u.teams_tier||'-');}
+ if(pi.plan_name){html+=card('Plan',pi.plan_name)+card('Monthly prompt quota',pi.monthly_prompt_credits??'-')+card('Billing strategy',pi.billing_strategy||'-');}
+ if(data.plan_status){html+=card('Prompt credits left',p.available_prompt_credits??'-')+card('Flow credits left',p.available_flow_credits??'-')+card('Daily quota left',(p.daily_quota_remaining??'-')+'%')+card('Weekly quota left',(p.weekly_quota_remaining??'-')+'%');}
+ if(data.capacity){const c=data.capacity;html+=card('Capacity',c.has_capacity?'Available':'Limited')+card('Active sessions',c.active_sessions??'-');if(c.message)html+=card('Capacity info',c.message);}
+ if(data.ide_status){html+=card('IDE status',data.ide_status.level||'-');}
  html+='</div>';
- if(data.providers){html+='<h2 style="margin-top:16px">渠道</h2><div class="grid">'+data.providers.map(x=>card(x.display_name||x.provider,x.provider)).join('')+'</div>';}
- if(data.model_statuses){html+='<h2 style="margin-top:16px">模型状态告警</h2><div class="grid">'+data.model_statuses.filter(s=>s.status&&s.status!=='HEALTHY'&&s.status!=='OK'&&s.status!=='AVAILABLE').map(s=>card(s.model,s.status)).join('')+'</div>';}
- if(data.user_status_error)html+='<div class="err">账户用量拉取失败: '+esc(data.user_status_error)+'</div>';
+ if(data.providers){html+='<h2 style="margin-top:16px">Providers</h2><div class="grid">'+data.providers.map(x=>card(x.display_name||x.provider,x.provider)).join('')+'</div>';}
+ if(data.model_statuses){html+='<h2 style="margin-top:16px">Model status alerts</h2><div class="grid">'+data.model_statuses.filter(s=>s.status&&s.status!=='HEALTHY'&&s.status!=='OK'&&s.status!=='AVAILABLE').map(s=>card(s.model,s.status)).join('')+'</div>';}
+ if(data.user_status_error)html+='<div class="err">Failed to fetch account usage: '+esc(data.user_status_error)+'</div>';
  if(data.capacity_error)html+='<div class="err">'+esc(data.capacity_error)+'</div>';
  if(data.status_error)html+='<div class="err">'+esc(data.status_error)+'</div>';
  el.innerHTML=html;}catch(e){el.innerHTML='<div class="err">'+esc(e.message)+'</div>';}
@@ -507,18 +507,18 @@ async function loadModels(){
  try{const res=await fetch('/panel/api/models');const data=await res.json();allModels=data.models||[];
  const provs=[...new Set(allModels.map(m=>m.provider).filter(Boolean))].sort();
  const sel=document.getElementById('fProvider');provs.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o)});
- render();}catch(e){document.getElementById('stats').textContent='加载失败: '+e.message;}
+ render();}catch(e){document.getElementById('stats').textContent='Failed to load: '+e.message;}
 }
 function render(){
  const q=document.getElementById('search').value.trim().toLowerCase();
  const prov=document.getElementById('fProvider').value,tier=document.getElementById('fTier').value;
  const models=allModels.filter(m=>(!q||(m.uid+' '+(m.label||'')).toLowerCase().includes(q))&&(!prov||m.provider===prov)&&(!tier||m.cost_tier===tier));
- document.getElementById('stats').textContent='显示 '+models.length+' / 共 '+allModels.length+' 个模型';
+ document.getElementById('stats').textContent='Showing '+models.length+' / '+allModels.length+' models';
  const tbody=document.querySelector('#modelTable tbody');
- if(!models.length){tbody.innerHTML='<tr><td colspan="6" class="loading">无匹配模型</td></tr>';return;}
+ if(!models.length){tbody.innerHTML='<tr><td colspan="6" class="loading">No matching models</td></tr>';return;}
  tbody.innerHTML=models.map(m=>{
   let badges='';const add=(t,c)=>{badges+='<span class="badge">'+esc(t)+'</span>'};
-  if(m.disabled)add('disabled');if(m.is_premium)add('premium');if(m.is_beta)add('beta');if(m.is_new)add('new');if(m.is_recommended)add('推荐');if(m.supports_images)add('图片');if(m.is_capacity_limited)add('限容');if(m.promo)add('promo');if(m.fast)add('fast');
+  if(m.disabled)add('disabled');if(m.is_premium)add('premium');if(m.is_beta)add('beta');if(m.is_new)add('new');if(m.is_recommended)add('recommended');if(m.supports_images)add('images');if(m.is_capacity_limited)add('cap-limited');if(m.promo)add('promo');if(m.fast)add('fast');
   const pin=m.price_input??m.credit_multiplier??'-',pout=m.price_output??'-';
   return '<tr><td><strong>'+esc(m.label||'-')+'</strong><div class="mono muted">'+esc(m.uid)+'</div></td><td>'+esc(m.provider||'-')+'<div class="mono muted">'+esc(m.api_provider||'')+'</div></td><td>'+esc(m.cost_tier||'-')+'</td><td class="mono">'+esc(String(pin))+' / '+esc(String(pout))+'</td><td class="mono">'+esc(String(m.max_tokens||'-'))+'</td><td>'+badges+'</td></tr>';
  }).join('');
@@ -546,7 +546,7 @@ export async function dashboard(request: Request, env: Env): Promise<Response> {
     const form = await request.formData();
     const provided = typeof form.get("password") === "string" ? (form.get("password") as string) : "";
     if (!(await passwordMatches(provided, password))) {
-      return new Response('{"error":"密码错误"}', { status: 401, headers: { "Content-Type": "application/json" } });
+      return new Response('{"error":"Incorrect password"}', { status: 401, headers: { "Content-Type": "application/json" } });
     }
     // Prune expired sessions so the per-isolate map stays bounded.
     const now = Date.now();
@@ -563,14 +563,14 @@ export async function dashboard(request: Request, env: Env): Promise<Response> {
 
   if (method === "GET" && path === "/panel/api/status") {
     if (!isAuthenticated(request, env)) {
-      return new Response('{"error":"未授权"}', { status: 401 });
+      return new Response('{"error":"Unauthorized"}', { status: 401 });
     }
     return apiStatus(env);
   }
 
   if (method === "GET" && path === "/panel/api/models") {
     if (!isAuthenticated(request, env)) {
-      return new Response('{"error":"未授权"}', { status: 401 });
+      return new Response('{"error":"Unauthorized"}', { status: 401 });
     }
     return apiModels(env);
   }
