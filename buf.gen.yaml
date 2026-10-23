@@ -1,0 +1,13 @@
+version: v2
+clean: true
+inputs:
+  - binary_image: proto/descriptors.binpb
+plugins:
+  - local: protoc-gen-es
+    out: src/gen
+    opt: target=ts
+    types:
+      - exa.api_server_pb.GetChatMessageRequest
+      - exa.api_server_pb.GetChatMessageResponse
+      - exa.api_server_pb.GetCascadeModelConfigsRequest
+      - exa.api_server_pb.GetCascadeModelConfigsResponse

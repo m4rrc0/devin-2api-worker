@@ -1,0 +1,15 @@
+name = "devin-2api-worker"
+main = "src/index.ts"
+compatibility_date = "2026-10-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Non-secret config — override per environment as needed.
+[vars]
+DEVIN_BASE_URL = "https://server.codeium.com"
+DEVIN_MODEL = ""
+DEBUG = "false"
+
+# Secrets (set with `wrangler secret put <NAME>`):
+#   DEVIN_TOKEN        — devin-session-token$... (required for /v1/*)
+#   API_KEY            — protects /v1/* (optional; empty = open)
+#   DASHBOARD_PASSWORD — protects /panel (optional; empty = open)
