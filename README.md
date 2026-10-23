@@ -30,7 +30,7 @@ Secrets (`wrangler secret put`):
 
 | Secret | Purpose |
 |---|---|
-| `DEVIN_TOKEN` | **required** — Devin API token for upstream calls |
+| `DEVIN_TOKEN` | **required** — Devin session token (`devin-session-token$...`) for upstream calls |
 | `API_KEY` | optional — protects `/v1/*`; accepted as `Authorization: Bearer` or `X-Api-Key` |
 | `DASHBOARD_PASSWORD` | optional — password-gates `/panel` (session cookie, 24h) |
 
@@ -57,6 +57,33 @@ npm run gen                # regenerate proto types from proto/descriptors.binpb
 | `CLOUDFLARE_ACCOUNT_ID` | Account ID — Cloudflare dashboard → Workers & Pages → right sidebar. |
 
 CI deploys only the worker code and `[vars]` from `wrangler.toml` — it does **not** set app secrets. Set those once (see below).
+
+### Getting a `DEVIN_TOKEN`
+
+The token authenticates against Devin (`devin-session-token$...`). Two ways to extract it from a local Devin install — both are reverse-engineered paths and could move without notice; the CLI one is the more stable bet.
+
+**Devin CLI (Linux/WSL, easiest)** — `devin auth login` writes TOML credentials:
+
+```sh
+devin auth login                    # https://docs.devin.ai/cli
+cat ~/.local/share/devin/credentials.toml
+# windsurf_api_key = "devin-session-token$..."
+```
+
+**Devin desktop app (SQLite state DB)**:
+
+```sh
+# macOS
+sqlite3 ~/Library/"Application Support"/Devin/User/globalStorage/state.vscdb \
+  "SELECT json_extract(value, '$.apiKey') FROM ItemTable WHERE key='windsurfAuthStatus';"
+
+# Linux — Electron data dir is $XDG_CONFIG_HOME/Devin (default ~/.config/Devin;
+# dir-name fallbacks: devin, Windsurf, windsurf)
+sqlite3 ~/.config/Devin/User/globalStorage/state.vscdb \
+  "SELECT json_extract(value, '$.apiKey') FROM ItemTable WHERE key='windsurfAuthStatus';"
+```
+
+Sources: [OpenTokenUsage Devin provider](https://github.com/PowerUserZ/OpenTokenUsage/blob/main/docs/providers/devin.md), [fast-context extract_key.py](https://github.com/ferstar/fast-context/blob/main/src/extract_key.py).
 
 ### Manually
 
