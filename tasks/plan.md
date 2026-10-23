@@ -12,3 +12,9 @@
 - [x] 9. Integration suite (workerd): full flows per protocol, WS, dashboard, auth; `wrangler.toml`, README, deploy docs.
 
 Status markers: `[ ]` pending, `[x]` done.
+
+## Round 2 — free-plan hardening (from CF limits review)
+
+- [ ] 10. `readBodyLimited`: single-pass body read via `request.arrayBuffer()` — drops the full-body `TextEncoder().encode()` re-encode (CPU+memory win on 32 MiB bodies). Test: oversized body w/o content-length still rejected.
+- [ ] 11. `MAX_BODY_BYTES` env var (default 32 MiB) so free-plan deploys can lower the cap; wrangler.toml var + test override path.
+- [ ] 12. README + wrangler.toml comments: free-plan limits (10 ms CPU, 100k req/day, WS counting, `cpu_ms` paid-only, 6 outgoing-connection cap — dashboard fans out 5).
