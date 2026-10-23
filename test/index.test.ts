@@ -207,3 +207,11 @@ describe("models + panel", () => {
     expect(models.status).toBe(200);
   });
 });
+
+describe("websocket route", () => {
+  it("GET /v1/responses without Upgrade returns 405", async () => {
+    const res = await SELF.fetch("http://t/v1/responses");
+    expect(res.status).toBe(405);
+    expect(res.headers.get("allow")).toBe("POST");
+  });
+});
