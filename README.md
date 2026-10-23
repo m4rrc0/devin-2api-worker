@@ -1,6 +1,6 @@
 # devin-2api-worker
 
-Cloudflare Workers port of [devin-2api-go](https://github.com/m4rrc0/devin-2api-go): an OpenAI/Anthropic-compatible API proxy backed by Devin's Connect RPC upstream (`server.codeium.com`, `exa.api_server_pb.ApiServerService`).
+Cloudflare Workers port of [devin-2api](https://github.com/leookun/devin-2api): an unofficial OpenAI/Anthropic-compatible API proxy backed by Devin's Connect RPC upstream (`server.codeium.com`, `exa.api_server_pb.ApiServerService`).
 
 ## Endpoints
 
